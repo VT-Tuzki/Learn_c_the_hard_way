@@ -1,0 +1,11 @@
+ex1:
+	随机删除, 删除"Hello,world." 以内的字符, 输出的字符同时减少, 删除双引号以外(包含双引号)的字符,编译失败
+ex2:
+	保存在ex1.c中
+ex3:
+	man 3 调用了library相关的内容
+ex4:
+	增加了几个target 例如 build_dir 等
+ex5:
+	看了ysyx-workbench的make
+	通过call 的方式 实现了make时用gitcommit的方式追踪数据
