@@ -2,7 +2,7 @@
 CC = gcc
 CFLAGS=-Wall -g
 
-TARGET = build/ex1
+TARGET = $(SRCS:%.c=build/%)
 SRCS = $(shell find . -name "*.c")
 OBJS = $(SRCS:%.c=build/%.o)
 
@@ -10,8 +10,7 @@ OBJS = $(SRCS:%.c=build/%.o)
 all:build_dir $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
-
+	@$(CC) $(CFLAGS) -o $@ $^
 
 build/%.o: %.c | build_dir
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -23,4 +22,4 @@ clean:
 	-rm -rf build
 
 
-.PHONY: all clean
+.PHONY: all clean ex1

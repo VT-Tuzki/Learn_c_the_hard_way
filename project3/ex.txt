@@ -1,0 +1,8 @@
+ex1:
+	保存在ex3.c中
+ex2:
+	如 %f $lf %d %ld %lld %x 等
+ex3:
+	目前已经可以 make clean all 全部练习
+ex4:
+	目前可以make clean 清空build

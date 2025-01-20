@@ -1,0 +1,23 @@
+ex1:
+	在Makefile中实现了
+
+ex2:
+	make - GNU make utility to maintain groups of programs
+常用功能
+ -n 不执行 只显示将会做什么
+ -f file 使用file指向的Makefile文件
+ -d 打印全部调试信息 可以与--debug搭配
+ --debug[=FLAGS]搭配使用
+ -p 打印make中的定义的规则和变量, 同时打印make版本 调试makefile可以用
+
+ ex3:
+  -Wall: This enables all the warnings about constructions that some users consider questionable, and that are easy to avoid (or
+           modify to prevent the warning), even in conjunction with macros.  This also enables some language-specific warnings
+           described in C++ Dialect Options and Objective-C and Objective-C++ Dialect Options.
+	简单来说是启用常用的警告功能,通常还有另一个"-Wextra"会和-Wall一起使用.
+	
+	-g: Produce debugging information in the operating system's native format (stabs, COFF, XCOFF, or DWARF).  GDB can work with
+           this debugging information.
+	... 
+
+
