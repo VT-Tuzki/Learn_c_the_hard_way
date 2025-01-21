@@ -1,0 +1,15 @@
+弄清楚在for循环的每一部分你都可以放置什么样的代码。
+for(INITIALIZER; TEST; INCREMENTER) {
+    CODE;
+}
+INITIALIZER: 初始条件
+TEST: 退出条件
+INCREMENTER: 此轮循环后做什么
+CODE: 每轮循环代码
+
+查询如何使用','（逗号）字符来在for循环的每一部分中，';'（分号）之间分隔多条语句。
+for(int i=0,j=0; ; )
+查询NULL是什么东西，尝试将它用做states的一个元素，看看它会打印出什么。
+state 0: (null)
+看看你是否能在打印之前将states的一个元素赋值给argv中的元素，再试试相反的操作。
+需要先把states 的声明移到赋值前
