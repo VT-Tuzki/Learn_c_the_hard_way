@@ -1,0 +1,11 @@
+把为universe_of_defects赋值的数改为不同的大小，观察编译器的警告。
+warning: integer overflow in expression of type ‘long int’ results in ‘0’
+这些巨大的数字实际上打印成了什么？
+0
+将long改为unsigned long，并试着找到对它来说太大的数字。
+4294967295U
+上网搜索unsigned做了什么。
+无符号数
+试着自己解释（在下个练习之前）为什么char可以和int相乘。
+char -> -128~127
+Unsigned char -> 0~255
