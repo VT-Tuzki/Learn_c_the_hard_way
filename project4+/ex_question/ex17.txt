@@ -1,0 +1,20 @@
+die函数需要接收conn变量作为参数，以便执行清理并关闭它。
+实现在ex17_1
+修改代码，使其接收参数作为MAX_DATA和MAX_ROWS，将它们储存在Database结构体中，并且将它们写到文件。这样就可以创建任意大小的数据库。
+ex17_1
+向数据库添加更多操作，比如find。
+ex17_1
+build/ex17_1 [file] f name
+查询C如何打包结构体，并且试着弄清楚为什么你的文件是相应的大小。看看你是否可以计算出结构体添加一些字段之后的新大小。
+int input_max_data = 16;
+int input_max_rows = 16;
+int sizeof_db = sizeof(unsigned int)*2 + sizeof(struct Address **) + (sizeof(int) + sizeof(int) + sizeof(char) * input_max_data * 2)* input_max_rows;
+//8+8+(4+4+1*16*2)*16 = 16+40*16 = 656
+-rw-r--r-- 1 vtuzki vtuzki  656 Jan 22 23:02 db.dat
+向Address添加一些字段，使它们可被搜索。
+直接用name搜
+编写一个shell脚本来通过以正确顺序运行命令执行自动化测试。提示：在bash顶端使用使用set -e，使之在任何命令发生错误时退出。
+ok
+尝试重构程序，使用单一的全局变量来储存数据库连接。这个新版本和旧版本比起来如何？
+
+搜索“栈数据结构”，并且在你最喜欢的语言中实现它，然后尝试在C中实现。
