@@ -4,7 +4,7 @@
 
 #Memory leaks
 ifeq ($(MEMCHECK),1)
-MEMORY_CHECK_PROG = valgrind --leak-check=full --error-exitcode=1 -q
+MEMORY_CHECK_PROG = valgrind --leak-check=full --error-exitcode=1
 else ifeq ($(MEMCHECK),2)
 MEMORY_CHECK_PROG = valgrind --leak-check=full --error-exitcode=1 --track-origins=yes
 endif
@@ -15,7 +15,7 @@ mem_mkdir:
 
 mem_/build/%: mem_mkdir
 # @echo "Running $(@:mem_/%=%) with memory check"
-	@$(MEMORY_CHECK_PROG) build/$(@:mem_/build/%=%) > build/valgrind/$(@:mem_/build/%=%).log 2>&1
+	@$(MEMORY_CHECK_PROG) build/$(@:mem_/build/%=%) > build/valgrind/$(@:mem_/build/bin/%=%).log  2>&1
 
 gdb_/build/%:
 # @echo "Running $(@:gdb_/%=%) with gdb"
@@ -23,3 +23,4 @@ gdb_/build/%:
 
 
 .PHONY: mem_/% gdb_/%
+

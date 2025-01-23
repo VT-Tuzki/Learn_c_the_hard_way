@@ -8,7 +8,7 @@
 WORK_DIR=$(pwd)
 APP_DIR=$WORK_DIR/app
 BUILD_DIR=$WORK_DIR/build
-
+BIN_DIR=$BUILD_DIR/bin
 # make rules
 MAKE_RULES=""
 DISPLAY_MAKE_TARGET=""
@@ -44,7 +44,7 @@ make_target() {
                 echo "No file. \$1 is a *.c name from directory "app""
                 exit 1
             fi
-        MAKE_RULES="build/$1"
+        MAKE_RULES="build/bin/$1"
         DISPLAY_MAKE_TARGET="app/$1.c"
     fi
 }
@@ -52,7 +52,7 @@ make_target() {
 make_() {
     print_color 33 "[BUILD] "$DISPLAY_MAKE_TARGET
     make clean
-    make $MAKE_RULES || exit 1
+    make –debug=basic $MAKE_RULES || exit 1
     print_color 33 "[BUILD] "$DISPLAY_MAKE_TARGET" done."
 }
 
@@ -81,6 +81,8 @@ mem_() {
         return
     fi
     print_color 33 "[MEMCHECK] "$DISPLAY_MEMCHECK
+    mkdir -p $BUILD_DIR/valgrind
+
     make_mem_or_gdb $MAKE_RULES $MEMCHECK "mem_"|| exit 1
     print_color 33 "[MEMCHECK] "$DISPLAY_MEMCHECK" done."
 }
@@ -130,17 +132,17 @@ mem_error_print() {
 # $1: make rules(target) $2: other rules
 make_mem_or_gdb() {
     if [ "$1" = "all" ]; then
-        for file in $(ls $BUILD_DIR); do
-            print_color 33 "[$3] build/$file"
-            make -B $3/build/$file $2
+        for file in $(ls $BIN_DIR); do
+            print_color 33 "[$3] bin/$file"
+            make -B $3/build/bin/$file $2
             MAKE_RETVAL=$?
             if [ $MAKE_RETVAL -ne 0 ]; then
-                print_color 31 "[$3] build/$file failed"
+                print_color 31 "[$3] bin/$file failed"
                 ERRORS+=("$file")
             fi
         done
     else
-        echo "\033[33m [$3] "$1"\033[0m"
+        print_color 33 "[$3] "$1
             make -B $3/$1 $2
             MAKE_RETVAL=$?
             if [ $MAKE_RETVAL -ne 0 ]; then
