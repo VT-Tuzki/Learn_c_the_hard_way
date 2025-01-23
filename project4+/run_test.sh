@@ -1,18 +1,33 @@
+#!/bin/bash
 # sh run_test.sh $1 $2 $3
 # $1: 1 - build all apps, other -> build app/$1.c
 # $2: 1 - use MEMCHECK lite, 2 - use MEMCHECK full, other -> no MEMCHECK
 # $3: 1 - use GDB, other -> no GDB
 
+# Golbal variables
 WORK_DIR=$(pwd)
 APP_DIR=$WORK_DIR/app
 BUILD_DIR=$WORK_DIR/build
+
+# make rules
 MAKE_RULES=""
 DISPLAY_MAKE_TARGET=""
+
+# MEMCHECK
 MEMCHECK=""
 DISPLAY_MEMCHECK="MEMCHECK: none"
+ERRORS=()
+# GDB
 GDB=""
 GDB_RULES=""
 DISPLAY_GDB="GDB: none"
+
+
+print_color() {
+    local color=$1
+    local text=$2
+    echo -e "\033[${color}m${text}\033[0m"
+}
 
 make_target() {
     if [ -z "$1" ]; then
@@ -35,10 +50,10 @@ make_target() {
 }
 
 make_() {
-    echo "\033[33m [BUILD] "$DISPLAY_MAKE_TARGET"\033[0m"
+    print_color 33 "[BUILD] "$DISPLAY_MAKE_TARGET
     make clean
     make $MAKE_RULES || exit 1
-    echo "\033[33m [BUILD] "$DISPLAY_MAKE_TARGET" done.\033[0m"
+    print_color 33 "[BUILD] "$DISPLAY_MAKE_TARGET" done."
 }
 
 mem_check() {
@@ -62,12 +77,12 @@ mem_check() {
 
 mem_() {
     if [ -z "$MEMCHECK" ]; then
-        echo "\033[33m [MEMCHECK] none memcheck \033[0m"
+        print_color 33 "[MEMCHECK] none memcheck"
         return
     fi
-    echo "\033[33m [MEMCHECK] "$DISPLAY_MEMCHECK"\033[0m"
+    print_color 33 "[MEMCHECK] "$DISPLAY_MEMCHECK
     make_mem_or_gdb $MAKE_RULES $MEMCHECK "mem_"|| exit 1
-    echo "\033[33m [MEMCHECK] "$DISPLAY_MEMCHECK" done.\033[0m"
+    print_color 33 "[MEMCHECK] "$DISPLAY_MEMCHECK" done."
 }
 
 gdb_check() {
@@ -86,7 +101,7 @@ gdb_check() {
     fi
 
     if [ $MAKE_RULES = "all" ]; then
-        echo "\033[33m  gdb: It is best to open only one program\033[0m"
+        print_color 33 "gdb: It is best to open only one program"
         exit 1
     fi
 
@@ -94,23 +109,34 @@ gdb_check() {
 
 gdb_() {
     if [ -z "$GDB_RULES" ]; then
-        echo "\033[33m [GDB] none gdb \033[0m"
+        print_color 33 "[GDB] none gdb"
         return
     fi
-    echo "\033[33m [GDB] "$DISPLAY_GDB"\033[0m"
+    print_color 33 "[GDB] "$DISPLAY_GDB
     make_mem_or_gdb $MAKE_RULES $GDB_RULES "gdb_"|| exit 1
+}
+
+
+
+mem_error_print() {
+    if [ ${#ERRORS[@]} -ne 0 ]; then
+        print_color 31 "[MEMCHECK] error list"
+        for error in ${ERRORS[@]}; do
+            print_color 31 "$error-->   $BUILD_DIR/valgrind/$error.log"
+        done
+    fi
 }
 
 # $1: make rules(target) $2: other rules
 make_mem_or_gdb() {
     if [ "$1" = "all" ]; then
         for file in $(ls $BUILD_DIR); do
-            echo "\033[33m [$3] "build/$file "\033[0m"
+            print_color 33 "[$3] build/$file"
             make -B $3/build/$file $2
             MAKE_RETVAL=$?
             if [ $MAKE_RETVAL -ne 0 ]; then
-                echo "\033[31m [$3] "build/$file "failed\033[0m"
-                exit 1
+                print_color 31 "[$3] build/$file failed"
+                ERRORS+=("$file")
             fi
         done
     else
@@ -118,10 +144,11 @@ make_mem_or_gdb() {
             make -B $3/$1 $2
             MAKE_RETVAL=$?
             if [ $MAKE_RETVAL -ne 0 ]; then
-                echo "\033[31m [$3] "$1 "failed\033[0m"
+                print_color 31 "[$3] "$1" failed"
                 exit 1
         fi
     fi
+    mem_error_print
 }
 
 run_check() {
@@ -131,7 +158,6 @@ run_check() {
 }
 
 run_test() {
-    #echo "\033[33m [$1] "$2" "$3"\033[0m"
     make_
     mem_
     gdb_

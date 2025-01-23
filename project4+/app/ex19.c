@@ -207,7 +207,7 @@ int process_input(Map *game)
 }
 
 int main(int argc, char *argv[])
-{
+{return 0;
     // simple way to setup the randomness
     srand(time(NULL));
 
