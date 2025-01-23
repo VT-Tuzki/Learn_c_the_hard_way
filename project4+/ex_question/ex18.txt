@@ -1,0 +1,70 @@
+用十六进制编辑器打开ex18，接着找到函数起始处的十六进制代码序列，看看是否能在原始程序中找到函数。
+可以
+fun1:
+int sorted_order(int a, int b)
+{
+    return a - b;
+}
+0x48 DEC
+f30f1efa554889e5897dfc8975f88b45fc2b45f85dc3f30f1e
+F30F1EFA554889E5897DFC8975F88B45FC2B45F85DC3F30F1E
+1: F3 0F 1E FA -> ENDBR64
+2: 55          -> push %rbp
+3: 48 89 e5    -> mov  %rsp        %rbp
+4: 89 7d fc    -> mov  %edi,       -0x4(%rbp)
+5: 89 75 f8    -> mov  %esi,       -0x8(%rbp)
+6: 8b 45 fc    -> mov  -0x4(%rbp), %eax
+7: 2b 45 f8    -> sub  -0x8(%rbp), %eax
+8: 5d          -> pop  %rbp
+9: c3          -> ret
+
+从场景分析:
+line1: ENDBR64 目前可以当成函数头,
+line9: ret 可以当成函数尾
+结合 line2: push %rbp 入栈 和line8 出栈操作来看, 这两行在保存执行函数前的栈环境
+line3: mov  %rsp        %rbp 应该是 保存完上个函数场景后, 设定改场景内容 其rsp 和rbp 应该可以拆分为 reg->stackpointer, reg->basepointer
+剩下 4 5 6 7  其中 7 行有sub, 8行pop准备退出了  则 456应该是将入参放到对应位置
+原函数 返回 a - b 其中 a为参数1  b 为参数2
+
+太久没用汇编了 印象中是 mov a to b 则 sub 也应该是相同 sub a to b -> b sub a to b 毕竟是被减数
+从场景上推断 edi是第一个参数 a 存放的地方, esi是第二个参数b 存放的地方
+line 6 mov  -0x4(%rbp), %eax 将第一个参数放到了 eax寄存器?
+line 7 sub  -0x8(%rbp), %eax 使用eax寄存器数值 - -0x8(%rbp) 数值 -> a - b 结果放回eax中?
+问题在于没有确定参数如何传入和返回, 从目前计算步骤分析,
+edi esi 可能就是传参寄存器, 但若是参数较多, 寄存器又该如何处理
+eax是返回值寄存器
+
+查询资料得知:
+寄存器:
+rbp -> 基地址指针 可以访问传入参数 和局部变量 函数调用场景 通常要line2 3一起使用
+rsp -> 栈指针 指向栈顶, 可以访问传入参数 局部变量
+push %rbp        ; Save the old base pointer
+mov %rsp, %rbp   ; Set the new base pointer to the current stack pointer
+edi: 通用寄存器之一, 被约定为用于传入的第一个整形参数....
+esi: 通用寄存器之一, 被约定为用于传入的第二个整形参数....
+eax: 通用寄存器之一, 被约定为用于 存储传出的返回值
+在你的十六进制编辑器中找到更多随机出现的东西并修改它们。重新运行你的程序看看发生了什么。字符串是你最容易修改的东西。
+延长字符串 出现Segmentation fault (core dumped)
+变更字符串数值 可以正常输出
+关于 sub rega regb -> regb =  regb - rega, rega 不变
+将错误的函数传给compare_cb，并看看C编辑器会报告什么错误。
+warning: passing argument 3 of ‘test_sorting’ from incompatible pointer type [-Wincompatible-pointer-types]
+将NULL传给它，看看程序中会发生什么。然后运行Valgrind来看看它会报告什么。
+编译成功 无warnning, 但 Segmentation fault (core dumped)
+==63392== Jump to the invalid address stated on the next line
+==63392==    at 0x0: ???
+==63392==    by 0x10947E: test_sorting (ex18.c:63)
+==63392==    by 0x10965A: main (ex18.c:101)
+==63392==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+==63392==
+==63392==
+==63392== Process terminating with default action of signal 11 (SIGSEGV)
+==63392==  Bad permissions for mapped region at address 0x0
+==63392==    at 0x0: ???
+==63392==    by 0x10947E: test_sorting (ex18.c:63)
+==63392==    by 0x10965A: main (ex18.c:101)
+==63392==
+所以 这个地方放的就是需要跳转的函数地址, 如果我在运行程序的时候, 有其他的程序修改了存储跳转地址的内容, 是可以动态修改我的程序的
+
+编写另一个排序算法，修改test_sorting使它接收任意的排序函数和排序函数的比较回调。并使用它来测试两种排序算法。
+在别的地方实现了

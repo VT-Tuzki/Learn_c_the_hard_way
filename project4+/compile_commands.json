@@ -1,0 +1,44 @@
+[
+  {
+    "arguments": [
+      "/usr/local/bin/gcc",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wno-unused",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-I/home/vtuzki/Learn_c_the_hard_way/project4+/include",
+      "-I./src",
+      "-I./include",
+      "-c",
+      "-o",
+      "build/ex19.o",
+      "./app/ex19.c"
+    ],
+    "directory": "/home/vtuzki/Learn_c_the_hard_way/project4+",
+    "file": "/home/vtuzki/Learn_c_the_hard_way/project4+/app/ex19.c",
+    "output": "/home/vtuzki/Learn_c_the_hard_way/project4+/build/ex19.o"
+  },
+  {
+    "arguments": [
+      "/usr/local/bin/gcc",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wno-unused",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-I/home/vtuzki/Learn_c_the_hard_way/project4+/include",
+      "-I./src",
+      "-I./include",
+      "-c",
+      "-o",
+      "build/src/object.o",
+      "src/object.c"
+    ],
+    "directory": "/home/vtuzki/Learn_c_the_hard_way/project4+",
+    "file": "/home/vtuzki/Learn_c_the_hard_way/project4+/src/object.c",
+    "output": "/home/vtuzki/Learn_c_the_hard_way/project4+/build/src/object.o"
+  }
+]
