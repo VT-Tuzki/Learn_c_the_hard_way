@@ -1,0 +1,29 @@
+不要再这样写代码了。
+ok
+查询维基百科的“达夫设备”词条，并且看看你能不能找到错误。将它与这里的版本对比，并且阅读文章来试着理解，为什么维基百科上的代码在你这里不能正常工作，但是对于汤姆·达夫可以。
+
+创建一些宏，来自动完成任意长度的这种设备。例如，你想创建32个case语句，并且不想手动把它们都写出来时，你会怎么办？你可以编写一次展开8个的宏吗？
+没整出来, 查了下 编译器不让在预处理的时候新建新的宏啊, 只搞出了一行展开8行case的东西, 没办法自定义最高行数
+
+修改main函数，执行一些速度检测，来看看哪个实际上更快。
+2 3 差不多
+计时函数整合成.h文件了
+查询memcpy、memmove和memset，并且也比较一下它们的速度。
+
+build/bin/ex23
+
+Stack Limit = 8388608 and -1 max
+size: 4000000
+Time taken by normal_copy:0.002475
+Time taken by duffs_device:0.002265
+Time taken by zeds_device:0.002206
+Time taken by define_duffs_device:0.001980
+memcpy,memmove,memset time test
+Time taken by memcpy:0.000190
+Time taken by memmove:0.000161
+Time taken by memset:0.000101
+
+
+
+不要再这样写代码了！
+嗯 好好好

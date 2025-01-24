@@ -11,18 +11,19 @@
       "-I/home/vtuzki/Learn_c_the_hard_way/project4+/include",
       "-I./src",
       "-I./include",
+      "-DNDEBUG",
       "-c",
       "-o",
-      "build/ex19.o",
-      "./app/ex19.c"
+      "build/obj/ex23.o",
+      "./app/ex23.c"
     ],
     "directory": "/home/vtuzki/Learn_c_the_hard_way/project4+",
-    "file": "/home/vtuzki/Learn_c_the_hard_way/project4+/app/ex19.c",
-    "output": "/home/vtuzki/Learn_c_the_hard_way/project4+/build/ex19.o"
+    "file": "/home/vtuzki/Learn_c_the_hard_way/project4+/app/ex23.c",
+    "output": "/home/vtuzki/Learn_c_the_hard_way/project4+/build/obj/ex23.o"
   },
   {
     "arguments": [
-      "/usr/local/bin/gcc",
+      "/usr/bin/gcc",
       "-g",
       "-Wall",
       "-Wextra",
@@ -32,13 +33,15 @@
       "-I/home/vtuzki/Learn_c_the_hard_way/project4+/include",
       "-I./src",
       "-I./include",
+      "-DNDEBUG",
       "-c",
+      "-fdiagnostics-color",
       "-o",
-      "build/src/object.o",
-      "src/object.c"
+      "build/obj/ex23.o",
+      "./app/ex23.c"
     ],
     "directory": "/home/vtuzki/Learn_c_the_hard_way/project4+",
-    "file": "/home/vtuzki/Learn_c_the_hard_way/project4+/src/object.c",
-    "output": "/home/vtuzki/Learn_c_the_hard_way/project4+/build/src/object.o"
+    "file": "/home/vtuzki/Learn_c_the_hard_way/project4+/app/ex23.c",
+    "output": "/home/vtuzki/Learn_c_the_hard_way/project4+/build/obj/ex23.o"
   }
 ]

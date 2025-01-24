@@ -53,7 +53,7 @@ make_() {
     print_color 33 "[BUILD] "$DISPLAY_MAKE_TARGET
     make clean
     make –debug=basic $MAKE_RULES || exit 1
-    print_color 33 "[BUILD] "$DISPLAY_MAKE_TARGET" done."
+    print_color 32 "[BUILD] "$DISPLAY_MAKE_TARGET" done."
 }
 
 mem_check() {
@@ -80,11 +80,12 @@ mem_() {
         print_color 33 "[MEMCHECK] none memcheck"
         return
     fi
-    print_color 33 "[MEMCHECK] "$DISPLAY_MEMCHECK
+    print_color 33 "$DISPLAY_MEMCHECK start."
     mkdir -p $BUILD_DIR/valgrind
 
-    make_mem_or_gdb $MAKE_RULES $MEMCHECK "mem_"|| exit 1
-    print_color 33 "[MEMCHECK] "$DISPLAY_MEMCHECK" done."
+    make_mem_or_gdb $MAKE_RULES $MEMCHECK "mem_"
+
+    print_color 32 "$DISPLAY_MEMCHECK done."
 }
 
 gdb_check() {
@@ -121,6 +122,10 @@ gdb_() {
 
 
 mem_error_print() {
+    if [ "$1" = "gdb_" ]; then
+        return
+    fi
+
     if [ ${#ERRORS[@]} -ne 0 ]; then
         print_color 31 "[MEMCHECK] error list"
         for error in ${ERRORS[@]}; do
@@ -143,14 +148,20 @@ make_mem_or_gdb() {
         done
     else
         print_color 33 "[$3] "$1
-            make -B $3/$1 $2
-            MAKE_RETVAL=$?
-            if [ $MAKE_RETVAL -ne 0 ]; then
-                print_color 31 "[$3] "$1" failed"
-                exit 1
+        make -B $3/$1 $2
+        MAKE_RETVAL=$?
+        if [ "$3" = "gdb_" ]; then
+            return
+        fi
+        if [ $MAKE_RETVAL -ne 0 ]; then
+            print_color 31 "[$3] "$1" failed"
+            print_color 31 "[$3]  $BUILD_DIR/valgrind/${1##*/}.log"
+        else
+            print_color 32 "[$3]  $BUILD_DIR/valgrind/${1##*/}.log"
         fi
     fi
-    mem_error_print
+
+    mem_error_print $3
 }
 
 run_check() {
@@ -164,7 +175,7 @@ run_test() {
     mem_
     gdb_
     echo
-    echo ALL test done.
+    print_color 32 "ALL test done."
     exit 0
 }
 

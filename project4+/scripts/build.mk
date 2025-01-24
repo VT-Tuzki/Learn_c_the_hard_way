@@ -42,4 +42,5 @@ clean:
 	@-rm -rf build
 
 .PHONY: all clean
+# 保存中间文件
 .SECONDARY:
