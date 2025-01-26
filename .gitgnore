@@ -1,8 +1,7 @@
 compile_commands.json
 map
-build/*
+build
 .cache/*
-.gitgnore
 
 *.log
 
