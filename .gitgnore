@@ -2,6 +2,9 @@
 compile_commands.json
 map
 build/*
-cache/*
-gitgnore
+*cache/*
+.gitgnore
 
+.vscode/
+
+.log
