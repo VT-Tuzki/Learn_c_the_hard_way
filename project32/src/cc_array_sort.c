@@ -1,13 +1,10 @@
-#include "cc_array.h"
+#include "ds/array/cc_array.h"
 #include "cc_array_sort.h"
-#include "stdio.h"
-#include <assert.h>
-#include <stddef.h>
-#include <strings.h>
+#include "core/cc_stdint.h"
 
-static size_t cc_array_sort_divide(struct cc_array *self,cc_cmp_fn_t cmp, size_t start, size_t end)
+static cc_size_t cc_array_sort_divide(struct cc_array *self,cc_cmp_fn_t cmp, cc_size_t start, cc_size_t end)
 {
-    size_t left,right,mid;
+    cc_size_t left,right,mid;
     left = start;
     right = end;
     mid = start;
@@ -24,9 +21,9 @@ static size_t cc_array_sort_divide(struct cc_array *self,cc_cmp_fn_t cmp, size_t
     return left;
 }
 
-static void cc_array_sort_quick_(struct cc_array *self, cc_cmp_fn_t cmp, size_t start, size_t end)
+static void cc_array_sort_quick_(struct cc_array *self, cc_cmp_fn_t cmp, cc_size_t start, cc_size_t end)
 {
-    size_t mid;
+    cc_size_t mid;
     if(start >= end)
         return;
 
@@ -50,7 +47,7 @@ int cc_array_sort_quick(struct cc_array *self, cc_cmp_fn_t cmp)
 
 int cc_array_sort_bubble(struct cc_array *self, cc_cmp_fn_t cmp)
 {
-    size_t i,j;
+    cc_size_t i,j;
     if(self == NULL) return 1;
     if(cmp == NULL) return 2;
 
@@ -62,13 +59,13 @@ int cc_array_sort_bubble(struct cc_array *self, cc_cmp_fn_t cmp)
     return 0;
 }
 
-static int cc_array_sort_merge_array_merge(struct cc_array *self, cc_cmp_fn_t cmp, size_t left, size_t mid,size_t right)
+static int cc_array_sort_merge_array_merge(struct cc_array *self, cc_cmp_fn_t cmp, cc_size_t left, cc_size_t mid,cc_size_t right)
 {
-    size_t i,j,k;
+    cc_size_t i,j,k;
 
     struct cc_array *tmp_array;
 
-    if(cc_array_new(&tmp_array, right - left + 1,self->elem_size)) {
+    if(cc_array_new(&tmp_array, right - left + 1,self->elem_size, self->remove_fn)) {
         return 1;
     }
 
@@ -97,9 +94,9 @@ static int cc_array_sort_merge_array_merge(struct cc_array *self, cc_cmp_fn_t cm
     return 0;
 }
 
-int cc_array_sort_merge_(struct cc_array *self, cc_cmp_fn_t cmp, size_t start, size_t end)
+int cc_array_sort_merge_(struct cc_array *self, cc_cmp_fn_t cmp, cc_size_t start, cc_size_t end)
 {
-    size_t mid;
+    cc_size_t mid;
     if(end == start) return 0;
 
     mid = start + ((end - start) >> 1);
@@ -119,6 +116,6 @@ int cc_array_sort_merge(struct cc_array *self, cc_cmp_fn_t cmp)
     if(self == NULL) return 1;
     if(cmp == NULL) return 2;
 
-    cc_array_sort_merge_(self,cmp,0,self->elem_nums - 1);
+    cc_array_sort_merge_(self,cmp, 0,self->elem_nums - 1);
     return 0;
 }

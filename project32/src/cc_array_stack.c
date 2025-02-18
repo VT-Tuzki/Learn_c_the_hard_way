@@ -1,10 +1,8 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include "core/cc_mem.h"
 
-#include "cc_common.h"
-#include "cc_stack.h"
-#include "cc_array.h"
+#include "core/cc_common.h"
+#include "ds/stack/cc_stack.h"
+#include "ds/array/cc_array.h"
 #include "cc_array_stack.h"
 
 struct cc_stack_i cc_array_stack_interface = {
@@ -14,16 +12,15 @@ struct cc_stack_i cc_array_stack_interface = {
 };
 
 
-int cc_array_stack_push(struct cc_array_stack *self, void *item) {
+int cc_array_stack_push(cc_array_stack_t *self, void *item) {
     if(cc_array_set(self->data, self->top, item)) {
-        printf("---%ld %ld\n",self->data->elem_nums,self->top);
         return 1;
     }
     self->top++;
     return 0;
 }
 
-int cc_array_stack_pop(struct cc_array_stack *self, void *item) {
+int cc_array_stack_pop(cc_array_stack_t *self, void *item) {
     if(self->top == 0) {
         return 1;
     }
@@ -33,7 +30,7 @@ int cc_array_stack_pop(struct cc_array_stack *self, void *item) {
     return 0;
 }
 
-int cc_array_stack_peek(struct cc_array_stack *self, void *item) {
+int cc_array_stack_peek(cc_array_stack_t *self, void *item) {
     if(self->top == 0) {
         return 1;
     }
@@ -42,18 +39,18 @@ int cc_array_stack_peek(struct cc_array_stack *self, void *item) {
     return 0;
 }
 
-int cc_array_stack_elem_nums(struct cc_array_stack *self, size_t *elem_nums) {
+int cc_array_stack_elem_nums(cc_array_stack_t *self, cc_size_t *elem_nums) {
    *elem_nums = self->top;
     return 0;
 }
 
-int cc_array_stack_space(struct cc_array_stack *self, size_t *space) {
+int cc_array_stack_space(cc_array_stack_t *self, cc_size_t *space) {
     *space = self->data->elem_nums - self->top;
     return 0;
 }
 
 
-int cc_array_stack_init(struct cc_array_stack *self, struct cc_array *data) {
+int cc_array_stack_init(cc_array_stack_t *self, struct cc_array *data) {
     self->interface = &cc_array_stack_interface;
     self->data = data;
     self->top = 0;
@@ -62,16 +59,16 @@ int cc_array_stack_init(struct cc_array_stack *self, struct cc_array *data) {
 
 
 
-int cc_array_stack_new(struct cc_array_stack **self, size_t elem_nums, size_t elem_size) {
-    struct cc_array_stack *tmp;
+int cc_array_stack_new(cc_array_stack_t **self, cc_size_t elem_nums, cc_size_t elem_size, cc_delete_fn_t remove_fn) {
+    cc_array_stack_t *tmp;
     struct cc_array *array;
-    tmp = malloc(sizeof( *tmp));
+    tmp = cc_malloc(sizeof( *tmp));
 
     if(tmp == NULL) {
         goto fail1;
     }
 
-    if(cc_array_new(&array, elem_nums, elem_size)) {
+    if(cc_array_new(&array, elem_nums, elem_size, remove_fn)) {
         goto fail2;
     }
 
@@ -85,15 +82,15 @@ int cc_array_stack_new(struct cc_array_stack **self, size_t elem_nums, size_t el
 fail3:
     cc_array_delete(array);
 fail2:
-    free(tmp);
+    cc_free(tmp);
 fail1:
     return 1;
 }
 
-int cc_array_stack_delete(struct cc_array_stack *self) {
+int cc_array_stack_delete(cc_array_stack_t *self) {
     if(cc_array_delete(self->data)) {
         return 1;
     }
-    free(self);
+    cc_free(self);
     return 0;
 }

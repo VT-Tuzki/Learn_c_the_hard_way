@@ -1,4 +1,4 @@
-#include "cc_array.h"
+#include "ds/array/cc_array.h"
 #include "cc_array_sort.h"
 #include <assert.h>
 #include <math.h>
@@ -17,7 +17,7 @@ int float_cmp(void *left,void *right)
 int main(void) {
     struct cc_array array;
     unsigned char data[10 * sizeof(float)];
-    size_t index;
+    cc_size_t index;
 
     float i;
     float tmp = 0;
@@ -25,7 +25,7 @@ int main(void) {
 
     printf("------init----------\n");
 
-    assert(!cc_array_init(&array, data, 10, sizeof(float)));
+    assert(!cc_array_init(&array, data, 10, sizeof(float), NULL));
 
     for (i = 0.27; i < 10; i++)
         assert(!cc_array_set(&array, i, &i));

@@ -1,0 +1,51 @@
+
+实现:
+/include/ds/list.h
+/src/cc_list.h
+对应re_learn项目commit
+commit e11a4dcaa91a5471c4ed59745250368ea91025c3 (HEAD -> main, origin/main, origin/HEAD)
+Author: shucai <1374643996@qq.com>
+Date:   Tue Feb 18 20:32:32 2025 +0800
+
+    [ADD][REFACTOR] 重构了测试文件的目录结构,增加了list的合并 分割操作
+
+
+研究双向和单向链表，以及什么情况下其中一种优于另一种。
+单向链表:
+    优点: 相对于双向 少内存占用 已知前驱节点时插入 删除高效(双指针遍历)
+    缺点: 只能单向遍历(瞎子掰苞米,拿一个扔一个), 无前驱节点信息的所有操作都要遍历
+    综合场景: 资源受限,操作只局限于头部 尾部
+双向列表:
+    优点: 正反向访问 只需要已知一个节点 即可在该节点前插后插删除
+    缺点: 对于单项内存占用多 同时需要维护双指针(prev next指针)
+    综合场景: 多次双向遍历 复杂数据结构的容器类
+研究双向链表的限制。例如，虽然它们对于插入和删除元素很高效，但是对于变量元素比较慢。
+    题目的例子: 变量元素有点让人不理解, 我就当成时变更链表内某个节点的元素
+        当需要修改链表内某个节点时 需要经过O(n)的遍历 然后经过O(1)的修改
+    额外举例: 链表在高频率遍历\批量处理数据场景 性能原低于数组
+        CPU有缓存功能, 但是链表内存不连续, 导致不如内存连续的数组
+    额外举例: 链表指针维护存在风险 复杂度高
+        这个链表实现只是暂时告一段落, 后续会继续补全, 之前用ai分析了下我的链表
+它说在IEC61508标准中链表结构都要有CRC校验,但是我又没有IEC61508标准, 一查还要付费
+后续查到了国内相同的GB/T 20438.1 标准说是相同https://file.vogel.com.cn/124/upload/resources/file/300170.pdf
+其中内容对链表有如下要求:
+1. 每次操作完链表后 都要进行链表有效性检查 如链表是否在头尾节点间存在一个环 双向链表就要正反都跑一遍
+2. 链表需要校验crc, 因为双向链表多个数据 crc计算也要增加
+
+还缺少什么你能想到的操作？比如复制、连接、分割等等。实现这些操作，并且为它们编写单元测试。
+测试文件:project32/test/cc_list_1_static_test.c
+复制
+void test_copy_empty_list();
+void test_copy_single_node();
+void test_copy_multiple_nodes();
+void test_copy_error_handling();
+
+连接
+void test_concat_empty_left();
+void test_concat_normal_list();
+void test_concat_error_handling();
+
+分割
+void test_split_empty_left();
+void test_split_normal_list();
+void test_split_error_handling();
