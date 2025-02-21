@@ -1,0 +1,109 @@
+commit e53125e93e56e38421bfa12ed6ab82a5938dd907 (HEAD -> main, origin/main, origin/HEAD)
+Author: shucai <1374643996@qq.com>
+Date:   Fri Feb 21 13:15:41 2025 +0800
+
+    [CHANGE] 去除测试时的超20秒关闭
+
+
+List_split
+    int cc_list_split(cc_list_t **new_list, cc_list_t *old_list, cc_check_fn_t check_fn);
+    int cc_list_split_middle(cc_list_t **new_right_list, cc_list_t *old_left_list);
+    int cc_list_split_block(cc_list_t **new_block_list, cc_list_t *old_left_list, cc_size_t block_size, cc_list_node_t **current);
+
+List_join
+    int cc_list_insert_head(cc_list_t *self, void *data);
+    int cc_list_insert_tail(cc_list_t *self, void *data);
+    int cc_list_insert_sort(cc_list_t *self, void *data, cc_cmp_fn_t cmp);
+
+is_sorted
+    int cc_list_sort_check(cc_list_t *self, cc_cmp_fn_t cmp, cc_size_t *dir);
+
+
+创建单元测试来比较这两个算法的性能。你需要man 3 time来查询基本的时间函数，并且需要运行足够的迭代次数，至少以几秒钟作为样本。
+改变需要排序的链表中的数据总量，看看耗时如何变化。
+寻找方法来创建不同长度的随机链表，并且测量需要多少时间，之后将它可视化并与算法的描述对比。
+    注: 搞排序搞了好久  因为测试的时候都默认开了Valgrind 检测泄露,  但是这个东西涉及到内存分配的时候又会减速
+    所以导致中间的几个排序的时间拉的非常大 搞了好久才想起来这个东西会影响结果
+    五个排序
+    冒泡:
+    标准
+    不排序提前退出
+    end标志动态缩减
+    归并
+    标准递归 n~1~n
+    循环 1~2~4~n 该场景在链表中有着严重的malloc 和free的速度问题 根据N数量调整为 list->array->sort->list
+    /home/vtuzki/Learn_c_the_hard_way/project33/test/cc_list_2_static_test.c
+    #define ARR_LEN 10005
+
+    长度 50005
+        开了Valgrind 不能开这个测实际运行速度
+            total heap usage: 550,061 allocs, 550,061 frees, 8,677,788 bytes allocated
+            Time taken by bubble_traditional_sort_time:931.523879
+            Time taken by bubble_adaptive_sort_time:928.165750
+            Time taken by bubble_get_end_sort_time:471.655787
+            Time taken by merge_traditional_sort_time:0.351690
+        不开valgrind
+            第一次:
+                Time taken by bubble_traditional_sort_time:12.039729
+                Time taken by bubble_adaptive_sort_time:12.485660
+                Time taken by bubble_get_end_sort_time:8.435198
+                Time taken by merge_traditional_sort_time:0.008567
+            第二次
+                Time taken by bubble_traditional_sort_time:12.067684
+                Time taken by bubble_adaptive_sort_time:12.496898
+                Time taken by bubble_get_end_sort_time:8.570872
+                Time taken by merge_traditional_sort_time:0.009775
+                Time taken by merge_bottom_sort_time:24.296303
+
+
+    长度10005
+        开了Valgrind 不能开这个测实际运行速度
+            第一次
+                Time taken by bubble_traditional_sort_time:25.210568
+                Time taken by bubble_adaptive_sort_time:24.982907
+                Time taken by bubble_get_end_sort_time:13.782485
+                Time taken by merge_traditional_sort_time:0.063384
+
+            第二次
+                Time taken by bubble_traditional_sort_time:25.271706
+                Time taken by bubble_adaptive_sort_time:24.946208
+                Time taken by bubble_get_end_sort_time:13.914611
+                Time taken by merge_traditional_sort_time:0.064186
+        不开valgrind
+            第一次
+                Time taken by bubble_traditional_sort_time:0.404504
+                Time taken by bubble_adaptive_sort_time:0.422986
+                Time taken by bubble_get_end_sort_time:0.278468
+                Time taken by merge_traditional_sort_time:0.001541
+                Time taken by merge_bottom_sort_time:0.554939
+    不对随机数取模测试
+    Time taken by bubble_traditional_sort_time:25.341365
+    Time taken by bubble_adaptive_sort_time:25.040942
+    Time taken by bubble_get_end_sort_time:13.849646
+    Time taken by merge_traditional_sort_time:0.065495
+
+    Time taken by check_merge_traditional_time:0.001736
+    Time taken by check_traditional_time:0.004224
+    Time taken by check_adaptive_time:0.002677
+    Time taken by check_get_end_time:0.002776
+    长度1005
+    Time taken by bubble_traditional_sort_time:0.241815
+    Time taken by bubble_adaptive_sort_time:0.243286
+    Time taken by bubble_get_end_sort_time:0.138458
+    Time taken by merge_traditional_sort_time:0.009386
+
+    Time taken by check_merge_traditional_time:0.000267
+    Time taken by check_traditional_time:0.001045
+    Time taken by check_adaptive_time:0.000361
+    Time taken by check_get_end_time:0.000296
+
+尝试解释为什么对链表排序十分麻烦。
+    有些链表存数据 有些链表存指针 所以要传入cmp进行判断 函数调用花费高
+    链表不连续 基本是放弃了cache加速
+    链表重排序有两种逻辑
+        1. 移动data 不移动节点 ->若有外部变量拿了对应节点内容 会造成更改
+        2. 断链 重链接 双向链表 搞一次要走好几条 花费也挺高的
+实现List_insert_sorted（有序链表），它使用List_compare，接收一个值，将其插入到正确的位置，使链表有序。它与创建链表后再进行排序相比怎么样？
+    全程使用List_insert_sorted 插入数据构建列表, 排序时间放在了每次插入中 相当于每次插入都要遍历一次 让链表O(1)插入的优势变回了O(n) 不过得到了自动排序
+尝试实现维基百科上“自底向上”的归并排序。上面的代码已经是C写的了，所以很容易重新创建，但是要试着理解它的工作原理，并与这里的低效版本对比。
+写了 自底向上的归并排序, 因为全靠链表实现导致创建中间链表 的开销很大, 后续找时间改成array等其他优化逻辑
